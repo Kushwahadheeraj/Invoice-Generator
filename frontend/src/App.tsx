@@ -1,63 +1,86 @@
 // client/src/App.tsx
-import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import Header from './components/Header';
-import InvoiceList from './components/InvoiceList';
-import EmptyState from './components/EmptyState';
-import { Invoice } from './types';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchInvoices } from './store/slices/invoiceSlice';
+import type { RootState } from './store/store';
+import type { Invoice } from './types';
+
+// Components
+import Header from './components/Header';
+import EmptyState from './components/EmptyState';
+import InvoiceList from './components/InvoiceList';
+import InvoiceItem from './components/InvoiceItem';
+
+// Pages
 import Register from './pages/Register';
+import Login from './pages/Login';
+import Welcome from './pages/Welcome';
 import NewInvoice from './pages/NewInvoice';
+
+// Protected Route Component
+const Protected: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { token } = useSelector((s: RootState) => s.auth);
+  return token ? <>{children}</> : <Navigate to="/login" replace />;
+};
 
 const API_URL = 'http://localhost:5001/api/invoices';
 
 const App: React.FC = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchInvoices = useCallback(async (filters: string[] = []) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (filters.length > 0) {
-        params.append('status', filters.join(','));
-      }
-      const response = await axios.get(`${API_URL}?${params.toString()}`);
-      setInvoices(response.data);
-    } catch (error) {
-      console.error("Failed to fetch invoices:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
+  const dispatch = useDispatch();
+  const { loading } = useSelector((s: RootState) => s.invoices);
 
   useEffect(() => {
-    fetchInvoices();
-  }, [fetchInvoices]);
+    fetchInvoicesFromAPI();
+  }, []);
+
+  const fetchInvoicesFromAPI = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      setInvoices(data);
+      setFilteredInvoices(data);
+    } catch (error) {
+      console.error('Failed to fetch invoices:', error);
+    }
+  };
+
+  const onFilterChange = (filters: string[]) => {
+    if (filters.length === 0) {
+      setFilteredInvoices(invoices);
+    } else {
+      const filtered = invoices.filter(invoice => filters.includes(invoice.status));
+      setFilteredInvoices(filtered);
+    }
+  };
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <div className="max-w-4xl mx-auto py-12 px-6">
-              <Header invoiceCount={invoices.length} onFilterChange={fetchInvoices} />
-              {loading ? (
-                <p className="text-center mt-20">Loading...</p>
-              ) : invoices.length > 0 ? (
-                <InvoiceList invoices={invoices} />
+        <Route path="/" element={<Navigate to="/register" replace />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/welcome" element={<Protected><Welcome /></Protected>} />
+        <Route path="/new" element={<Protected><NewInvoice onCreated={() => onFilterChange([])} /></Protected>} />
+        <Route path="/invoices" element={<Protected>
+          <div className="min-h-screen bg-light-bg px-6 py-10">
+            <div className="max-w-4xl mx-auto">
+              <Header 
+                variant="invoice"
+                invoiceCount={invoices.length} 
+                onFilterChange={onFilterChange} 
+              />
+              {filteredInvoices.length > 0 ? (
+                <InvoiceList invoices={filteredInvoices} />
               ) : (
                 <EmptyState />
               )}
             </div>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/new" element={<NewInvoice onCreated={() => fetchInvoices()} />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+          </div>
+        </Protected>} />
+        <Route path="*" element={<Navigate to="/register" replace />} />
       </Routes>
     </BrowserRouter>
   );

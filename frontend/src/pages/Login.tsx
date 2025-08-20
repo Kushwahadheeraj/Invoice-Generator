@@ -1,42 +1,117 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../store/slices/authSlice';
+import type { RootState } from '../store/store';
+import Header from '../components/Header';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const { token, loading, error } = useSelector((s: RootState) => s.auth);
   const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    try {
-      const res = await axios.post('http://localhost:5001/api/auth/login', { email, password });
-      localStorage.setItem('token', res.data.token);
-      navigate('/');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
-    }
+    // @ts-ignore
+    dispatch(login({ email, password }));
   };
 
+  useEffect(() => {
+    if (token) navigate('/welcome');
+  }, [token, navigate]);
+
+  // Slider images
+  const images = [
+    'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1529336953121-4f3b7e68a9f0?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1483478550801-ceba5fe50e8e?q=80&w=1200&auto=format&fit=crop',
+  ];
+
+  const [slide, setSlide] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setSlide((s) => (s + 1) % images.length), 3000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-light-bg px-6">
-      <div className="w-full max-w-md bg-white rounded-xl shadow p-8">
-        <h1 className="text-2xl font-bold text-dark-1 mb-6">Login</h1>
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-dark-1">Email</label>
-            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="mt-1 w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-brand" />
+    <div className="min-h-screen bg-dark-1 flex relative">
+      {/* Dynamic Header */}
+      <Header variant="auth" title="levitation" subtitle="infotech" />
+      
+      {/* Left Side - Image Slider */}
+      <div className="w-1/2 flex items-center justify-center p-12">
+        <div className="relative h-[460px] w-full overflow-hidden rounded-xl shadow">
+          {images.map((src, idx) => (
+            <img 
+              key={idx} 
+              src={src} 
+              alt="slide" 
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${idx===slide?'opacity-100':'opacity-0'}`} 
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Right Side - Login Form */}
+      <div className="w-1/2 flex items-center justify-center p-12">
+        <div className="w-full max-w-md">
+          {/* Form Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">Let the Journey Begin!</h1>
+            <p className="text-gray-300">This is basic login page which is used for levitation assignment purpose.</p>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-dark-1">Password</label>
-            <input type="password" required minLength={6} value={password} onChange={e => setPassword(e.target.value)} className="mt-1 w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-brand" />
-          </div>
-          {error && <p className="text-red-600 text-sm">{error}</p>}
-          <button type="submit" className="w-full bg-brand hover:bg-brand-light text-white font-bold py-2 rounded-md">Login</button>
-        </form>
-        <p className="text-sm text-light-2 mt-4">Don't have an account? <Link to="/register" className="text-brand font-bold">Register</Link></p>
+
+          {/* Form */}
+          <form onSubmit={onSubmit} className="space-y-6">
+            <div>
+              <label className="block text-white font-medium mb-2">Email Address</label>
+              <input 
+                type="email" 
+                required 
+                value={email} 
+                onChange={e => setEmail(e.target.value)} 
+                placeholder="Enter Email ID"
+                className="w-full bg-dark-2 border border-gray-600 rounded-md p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand" 
+              />
+              <p className="text-gray-400 text-sm mt-1">This email will be displayed with your inquiry.</p>
+            </div>
+            
+            <div>
+              <label className="block text-white font-medium mb-2">Current Password</label>
+              <input 
+                type="password" 
+                required 
+                minLength={6} 
+                value={password} 
+                onChange={e => setPassword(e.target.value)} 
+                placeholder="Enter the Password"
+                className="w-full bg-dark-2 border border-gray-600 rounded-md p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand" 
+              />
+            </div>
+
+            {error && <p className="text-red-400 text-sm">{error}</p>}
+            
+            <div className="flex items-center gap-4">
+              <button 
+                disabled={loading} 
+                type="submit" 
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md transition-colors"
+              >
+                {loading ? 'Logging in...' : 'Login now'}
+              </button>
+              <Link to="/register" className="text-white hover:text-gray-300">Forget password?</Link>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* Top Right Corner - Branding */}
+      <div className="absolute top-6 right-6">
+        <div className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md transition-colors text-sm">
+          Connecting People With Technology
+        </div>
       </div>
     </div>
   );

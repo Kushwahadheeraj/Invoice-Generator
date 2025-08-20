@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { createInvoice } from '../store/slices/invoiceSlice';
+import Header from '../components/Header';
 
 interface Props {
   onCreated?: () => void;
@@ -15,6 +17,7 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
   const [items, setItems] = useState<Item[]>([{ name: '', quantity: 1, rate: 0, total: 0 }]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const updateItem = (index: number, field: keyof Item, value: string | number) => {
     const next = [...items];
@@ -36,24 +39,20 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
     setError('');
     try {
       const invoiceId = `#${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-      await axios.post('http://localhost:5001/api/invoices', {
-        invoiceId,
-        clientName,
-        clientEmail,
-        dueDate,
-        items,
-        amount,
-        status: 'pending',
-      });
+      // @ts-ignore
+      await dispatch(createInvoice({ invoiceId, clientName, clientEmail, dueDate, items, amount, status: 'pending' })).unwrap();
       onCreated?.();
-      navigate('/');
+      navigate('/invoices');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create invoice');
     }
   };
 
   return (
-    <div className="min-h-screen bg-light-bg px-6 py-10">
+    <div className="min-h-screen bg-light-bg px-6 py-10 relative">
+      {/* Dynamic Header */}
+      <Header showLogoutButton={true} title="levitation" subtitle="infotech" />
+      
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow p-8">
         <h1 className="text-2xl font-bold text-dark-1 mb-6">Add product</h1>
         <form onSubmit={onSubmit} className="space-y-6">
@@ -86,11 +85,11 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
                   </div>
                   <div className="col-span-2">
                     <label className="block text-xs font-semibold text-light-2">Qty</label>
-                    <input type="number" min={1} className="w-full border rounded-md p-2" value={item.quantity} onChange={e => updateItem(idx, 'quantity', e.target.value)} required />
+                    <input type="number" min={1} className="mt-1 w-full border rounded-md p-2" value={item.quantity} onChange={e => updateItem(idx, 'quantity', e.target.value)} required />
                   </div>
                   <div className="col-span-2">
                     <label className="block text-xs font-semibold text-light-2">Rate</label>
-                    <input type="number" min={0} className="w-full border rounded-md p-2" value={item.rate} onChange={e => updateItem(idx, 'rate', e.target.value)} required />
+                    <input type="number" min={0} className="mt-1 w-full border rounded-md p-2" value={item.rate} onChange={e => updateItem(idx, 'rate', e.target.value)} required />
                   </div>
                   <div className="col-span-2">
                     <label className="block text-xs font-semibold text-light-2">Total</label>
@@ -114,7 +113,7 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
 
           {error && <p className="text-red-600 text-sm">{error}</p>}
           <div className="flex justify-end gap-3">
-            <button type="button" onClick={() => navigate('/')} className="px-4 py-2 rounded-md bg-gray-200">Cancel</button>
+            <button type="button" onClick={() => navigate('/welcome')} className="px-4 py-2 rounded-md bg-gray-200">Cancel</button>
             <button type="submit" className="px-4 py-2 rounded-md bg-brand text-white font-bold">Next</button>
           </div>
         </form>
