@@ -1,161 +1,196 @@
 // client/src/components/Header.tsx
 import React, { useState } from 'react';
-import { Plus, ChevronDown } from 'lucide-react';
+import { Plus, ChevronDown, Menu, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 import type { RootState } from '../store/store';
 import logo from '../assets/logo.svg';
-import ConnectionStatusComponent from './ConnectionStatus';
 
 interface HeaderProps {
-  invoiceCount?: number;
-  onFilterChange?: (filters: string[]) => void;
   showLoginButton?: boolean;
   showLogoutButton?: boolean;
   title?: string;
   subtitle?: string;
-  variant?: 'default' | 'auth' | 'invoice';
+  variant?: 'default' | 'auth' | 'login' | 'register';
 }
 
 const Header: React.FC<HeaderProps> = ({ 
-  invoiceCount, 
-  onFilterChange,
   showLoginButton = false,
   showLogoutButton = false,
   title = "levitation",
   subtitle = "infotech",
   variant = 'default'
 }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [filters, setFilters] = useState<string[]>([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { token } = useSelector((s: RootState) => s.auth);
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    let newFilters: string[];
-    if (checked) {
-      newFilters = [...filters, name];
-    } else {
-      newFilters = filters.filter((f) => f !== name);
-    }
-    setFilters(newFilters);
-    onFilterChange?.(newFilters);
-  };
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
   };
 
-  // Auth variant (for Register/Login pages) - full-width top bar
-  if (variant === 'auth') {
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  // Login page variant - shows "Connecting People With Technology" button
+  if (variant === 'login') {
     return (
-      <div className="absolute top-0 left-0 right-0 h-14 bg-dark-2/80 backdrop-blur flex items-center">
-        <div className="mx-auto w-full flex items-center justify-between" style={{ maxWidth: '1440px', padding: '0 24px' }}>
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center">
-              <img src={logo} alt="Levitation" className="w-5 h-5" />
-            </div>
-            <div className="text-white">
-              <div className="font-bold leading-tight">{title}</div>
-              <div className="text-xs opacity-80 -mt-0.5">{subtitle}</div>
+      <div 
+        className="absolute top-0 w-full lg:w-[1340px] h-[64.0999984741211px] left-0 lg:-left-[0.5px] border-b border-white/10 rotate-0 opacity-100 bg-black/30 backdrop-blur-[10px] flex items-center justify-between z-10 px-3 xs:px-4 sm:px-6 lg:px-6"
+      >
+        <div className="flex items-center gap-2 xs:gap-3">
+          <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 rounded-lg bg-white flex items-center justify-center">
+            <div className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 bg-gray-800 rounded flex items-center justify-center">
+              <span className="text-white text-xs font-bold">&lt;/&gt;</span>
             </div>
           </div>
+          <div className="text-white">
+            <div className="font-bold leading-tight text-xs xs:text-sm sm:text-base lg:text-base">{title}</div>
+            <div className="text-xs opacity-80 -mt-0.5 hidden xs:block">{subtitle}</div>
+          </div>
+        </div>
 
-          <div className="flex items-center gap-3">
-            {showLoginButton && (
-              <Link
-                to="/login"
-                className="bg-lime-300 hover:bg-lime-200 text-black font-semibold py-1.5 px-4 rounded-md transition-colors text-sm"
-              >
-                Login
-              </Link>
-            )}
-            {showLogoutButton && token && (
-              <button
-                onClick={handleLogout}
-                className="bg-lime-300 hover:bg-lime-200 text-black font-semibold py-1.5 px-4 rounded-md transition-colors text-sm"
-              >
-                Logout
-              </button>
-            )}
+        <div className="flex items-center gap-2 xs:gap-3">
+          <div className="border border-lime-300 text-lime-300 px-2 xs:px-3 sm:px-4 py-1 xs:py-1.5 rounded-md text-xs xs:text-sm font-medium text-center max-w-[120px] xs:max-w-none">
+            <span className="hidden xs:inline">Connecting People With Technology</span>
+            <span className="xs:hidden">Technology</span>
           </div>
         </div>
       </div>
     );
   }
 
-  // Invoice variant (for invoice list page)
-  if (variant === 'invoice') {
+  // Register page variant - shows "Login" button
+  if (variant === 'register') {
     return (
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-brand/90 flex items-center justify-center">
-            <img src={logo} alt="Levitation" className="w-5 h-5" />
+      <div 
+        className="absolute top-0 w-full lg:w-[1340px] h-[64.0999984741211px] left-0 lg:-left-[0.5px] border-b border-white/10 rotate-0 opacity-100 bg-black/30 backdrop-blur-[10px] flex items-center justify-between z-10 px-3 xs:px-4 sm:px-6 lg:px-6"
+      >
+        <div className="flex items-center gap-2 xs:gap-3">
+        <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 rounded-lg bg-white flex items-center justify-center">
+            <div className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5 bg-gray-800 rounded flex items-center justify-center">
+              <span className="text-white text-xs font-bold">&lt;/&gt;</span>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-dark-1">Invoices</h1>
-            <p className="text-light-2 text-sm mt-1">There are {invoiceCount} total invoices</p>
+          <div className="text-white">
+            <div className="font-bold leading-tight text-xs xs:text-sm sm:text-base lg:text-base">{title}</div>
+            <div className="text-xs opacity-80 -mt-0.5 hidden xs:block">{subtitle}</div>
           </div>
         </div>
-        
-        <div className="flex items-center gap-10">
-          <ConnectionStatusComponent />
-          <div className="relative">
-            <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center gap-3 font-bold text-dark-1">
-              Filter by status <ChevronDown className={`transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} color="#7C5DFA" />
-            </button>
-            {dropdownOpen && (
-              <div className="absolute top-10 right-0 w-48 bg-white shadow-lg rounded-lg p-6 z-10">
-                {['draft', 'pending', 'paid'].map((status) => (
-                  <label key={status} className="flex items-center mb-4 last:mb-0 cursor-pointer">
-                    <input type="checkbox" name={status} onChange={handleCheckboxChange} className="w-4 h-4 accent-brand" />
-                    <span className="ml-3 font-bold capitalize text-dark-1">{status}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
 
-          <Link to="/new" className="flex items-center gap-4 bg-brand hover:bg-brand-light text-white font-bold py-2 pr-4 pl-2 rounded-full transition-colors">
-            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-              <Plus color="#7C5DFA" size={18} />
-            </div>
-            New Invoice
+        <div className="flex items-center gap-2 xs:gap-3">
+          <Link
+            to="/login"
+            className="bg-lime-300 hover:bg-lime-200 text-black font-semibold py-1.5 xs:py-2 px-3 xs:px-4 rounded-md transition-colors text-xs xs:text-sm lg:text-sm whitespace-nowrap min-h-[32px] flex items-center justify-center"
+          >
+            Login
           </Link>
         </div>
       </div>
     );
   }
 
-  // Default variant (for other pages like Welcome, NewInvoice)
-  return (
-    <div className="absolute top-0 left-0 right-0 h-14 bg-dark-2/80 backdrop-blur flex items-center">
-      <div className="mx-auto w-full flex items-center justify-between" style={{ maxWidth: '1440px', padding: '0 24px' }}>
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center">
-            <img src={logo} alt="Levitation" className="w-5 h-5" />
+  // Auth variant (for other auth pages) - full-width top bar
+  if (variant === 'auth') {
+    return (
+      <div 
+        className="absolute top-0 w-full lg:w-[1340px] h-[64.0999984741211px] left-0 lg:-left-[0.5px] border-b border-white/10 rotate-0 opacity-100 bg-black/30 backdrop-blur-[10px] flex items-center justify-between z-10 px-3 xs:px-4 sm:px-6 lg:px-6"
+      >
+        <div className="flex items-center gap-2 xs:gap-3">
+          <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 rounded-lg bg-white flex items-center justify-center">
+            <img src={logo} alt="Levitation" className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
           </div>
           <div className="text-white">
-            <div className="font-bold leading-tight">{title}</div>
-            <div className="text-xs opacity-80 -mt-0.5">{subtitle}</div>
+            <div className="font-bold leading-tight text-xs xs:text-sm sm:text-base lg:text-base">{title}</div>
+            <div className="text-xs opacity-80 -mt-0.5 hidden xs:block">{subtitle}</div>
           </div>
         </div>
 
-        <div>
+        <div className="flex items-center gap-2 xs:gap-3">
+          {showLoginButton && (
+            <Link
+              to="/login"
+              className="bg-lime-300 hover:bg-lime-200 text-black font-semibold py-1.5 xs:py-2 px-3 xs:px-4 rounded-md transition-colors text-xs xs:text-sm lg:text-sm whitespace-nowrap min-h-[32px] flex items-center justify-center"
+            >
+              Login
+            </Link>
+          )}
           {showLogoutButton && token && (
             <button
               onClick={handleLogout}
-              className="bg-lime-300 hover:bg-lime-200 text-black font-semibold py-1.5 px-4 rounded-md transition-colors text-sm"
+              className="bg-lime-300 hover:bg-lime-200 text-black font-semibold py-1.5 xs:py-2 px-3 xs:px-4 rounded-md transition-colors text-xs xs:text-sm lg:text-sm whitespace-nowrap min-h-[32px] flex items-center justify-center"
             >
               Logout
             </button>
           )}
         </div>
       </div>
+    );
+  }
+
+  // Default variant (for other pages like NewInvoice) - with mobile menu
+  return (
+    <div 
+      className="absolute top-0 w-full lg:w-[1340px] h-[64.0999984741211px] left-0 lg:-left-[0.5px] border-b border-white/10 rotate-0 opacity-100 bg-black/30 backdrop-blur-[10px] flex items-center justify-between z-10 px-3 xs:px-4 sm:px-6 lg:px-6"
+    >
+      <div className="flex items-center gap-2 xs:gap-3">
+        <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-9 sm:h-9 rounded-lg bg-white flex items-center justify-center">
+          <img src={logo} alt="Levitation" className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
+        </div>
+        <div className="text-white">
+          <div className="font-bold leading-tight text-xs xs:text-sm sm:text-base lg:text-base">{title}</div>
+          <div className="text-xs opacity-80 -mt-0.5 hidden xs:block">{subtitle}</div>
+        </div>
+      </div>
+
+      {/* Desktop Menu */}
+      <div className="hidden lg:flex items-center gap-3">
+        {showLogoutButton && token && (
+          <button
+            onClick={handleLogout}
+            className="bg-lime-300 hover:bg-lime-200 text-black font-semibold py-1.5 px-4 rounded-md transition-colors text-sm"
+          >
+            Logout
+          </button>
+        )}
+      </div>
+
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden">
+        <button
+          onClick={toggleMobileMenu}
+          className="text-white p-2 hover:bg-white/10 rounded-md transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
+          aria-label="Toggle mobile menu"
+        >
+          {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden absolute top-full left-0 right-0 bg-black/95 backdrop-blur-[10px] border-b border-white/10">
+          <div className="px-4 py-4 space-y-3">
+            {showLogoutButton && token && (
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full bg-lime-300 hover:bg-lime-200 text-black font-semibold py-3 px-4 rounded-md transition-colors text-sm text-center min-h-[44px] flex items-center justify-center"
+              >
+                Logout
+              </button>
+            )}
+            <div className="text-white text-sm text-center opacity-70 py-2">
+              {title} {subtitle}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

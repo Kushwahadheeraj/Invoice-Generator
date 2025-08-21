@@ -5,7 +5,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import helmet from 'helmet';
-import invoiceRoutes from './routes/invoice.routes';
 import authRoutes from './routes/auth.routes';
 import pdfRoutes from './routes/pdf.routes';
 
@@ -22,7 +21,6 @@ app.use(morgan('dev'));
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/invoices', invoiceRoutes);
 app.use('/api/pdf', pdfRoutes);
 
 // DB Connection
