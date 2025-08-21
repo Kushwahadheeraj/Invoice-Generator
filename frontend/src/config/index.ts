@@ -1,28 +1,36 @@
-// Environment configuration
-export const config = {
-  // API Configuration
-  api: {
-    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api',
-    timeout: 10000,
-  },
-  
-  // App Configuration
-  app: {
-    name: 'Invoice Generator',
-    version: '1.0.0',
-  },
-  
-  // Feature Flags
-  features: {
-    pdfGeneration: true,
-    invoiceTemplates: true,
-    bulkOperations: false,
+// API Configuration
+export const API_CONFIG = {
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://invoice-generator-2-0mdk.onrender.com/api',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
   },
 };
 
-// Environment check
+// Environment Configuration
+export const ENV_CONFIG = {
+  isDevelopment: import.meta.env.DEV,
+  isProduction: import.meta.env.PROD,
+  apiBaseURL: import.meta.env.VITE_API_BASE_URL || 'https://invoice-generator-2-0mdk.onrender.com/api',
+};
+
+// Export individual values for backward compatibility
 export const isDevelopment = import.meta.env.DEV;
 export const isProduction = import.meta.env.PROD;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://invoice-generator-2-0mdk.onrender.com/api';
+
+// App Configuration
+export const APP_CONFIG = {
+  name: 'Invoice Generator',
+  version: '1.0.0',
+};
+
+// Feature Flags
+export const FEATURES_CONFIG = {
+  pdfGeneration: true,
+  invoiceTemplates: true,
+  bulkOperations: false,
+};
 
 // API endpoints
 export const API_ENDPOINTS = {
@@ -31,15 +39,14 @@ export const API_ENDPOINTS = {
     register: '/auth/register',
     logout: '/auth/logout',
   },
-  invoices: {
-    list: '/invoices',
-    create: '/invoices',
-    update: (id: string) => `/invoices/${id}`,
-    delete: (id: string) => `/invoices/${id}`,
-    getById: (id: string) => `/invoices/${id}`,
-  },
   pdf: {
     generate: '/pdf/generate',
-    download: '/pdf/download',
+  },
+  invoices: {
+    create: '/invoices',
+    list: '/invoices',
+    get: (id: string) => `/invoices/${id}`,
+    update: (id: string) => `/invoices/${id}`,
+    delete: (id: string) => `/invoices/${id}`,
   },
 };

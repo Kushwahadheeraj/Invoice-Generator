@@ -1,9 +1,9 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
-import { config } from '../config';
+import { API_CONFIG } from '../config';
 
 // API Configuration
-const API_BASE_URL = config.api.baseURL;
+const API_BASE_URL = API_CONFIG.baseURL;
 
 // Create axios instance with default config
 const api: AxiosInstance = axios.create({

@@ -9,7 +9,6 @@ type Item = { name: string; quantity: number; rate: number; total: number };
 
 const NewInvoice: React.FC = () => {
   const [clientName, setClientName] = useState('');
-  const [clientEmail, setClientEmail] = useState('');
   const [items, setItems] = useState<Item[]>([]);
   const [newItem, setNewItem] = useState<{ name: string; rate: number; quantity: number}>({ name: '', rate: 0, quantity: 1 });
   const [isGenerating, setIsGenerating] = useState(false);
@@ -246,7 +245,7 @@ const NewInvoice: React.FC = () => {
               <!-- Bottom Row: Actual name value and email field -->
               <div class="client-row">
                 <div class="client-value">${clientName || authUserName || 'Person_name'}</div>
-                <input type="email" class="email-field" value="${clientEmail || authUserEmail || 'example@email.com'}" readonly>
+                <input type="email" class="email-field" value="${authUserEmail || 'example@email.com'}" readonly>
               </div>
             </div>
           </div>

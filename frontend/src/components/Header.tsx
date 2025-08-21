@@ -1,6 +1,6 @@
 // client/src/components/Header.tsx
 import React, { useState } from 'react';
-import { Plus, ChevronDown, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
