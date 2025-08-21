@@ -381,7 +381,7 @@ const NewInvoice: React.FC = () => {
                   type="number" 
                   min="0"
                   className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
-                  placeholder="Enter the price"
+                  placeholder="Enter product price"
                   value={newItem.rate}
                   onChange={e => setNewItem({ ...newItem, rate: Number(e.target.value) })} 
                 />
@@ -392,14 +392,14 @@ const NewInvoice: React.FC = () => {
                   type="number" 
                   min="1"
                   className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
-                  placeholder="Enter the quantity"
+                  placeholder="Enter product quantity"
                   value={newItem.quantity}
                   onChange={e => setNewItem({ ...newItem, quantity: Number(e.target.value) })} 
                 />
               </div>
             </div>
             
-            <div className="mt-6 flex justify-center sm:justify-start">
+            <div className="mt-6 flex justify-center">
               <button 
                 type="button" 
                 onClick={addItem} 
