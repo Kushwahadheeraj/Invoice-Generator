@@ -18,7 +18,7 @@ app.use(helmet());
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? [
-        'https://stirring-biscotti-8c9465.netlify.app', // Your Netlify domain
+        'https://invoice-gen123.netlify.app', // Your Netlify domain
         'https://your-frontend-domain.com', // Replace with your actual frontend domain
         'http://localhost:3000', // Local development
         'http://localhost:5173'  // Vite dev server
