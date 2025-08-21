@@ -12,24 +12,25 @@ export interface InvoiceHtmlInput {
   invoiceId: string;
   date: string;
   clientName: string;
+  clientEmail?: string;
   items: InvoiceItemInput[];
   subtotal: number;
   gst: number;
   total: number;
+  logoDataUrl?: string;
 }
 
 export const buildInvoiceHtml = (data: InvoiceHtmlInput): string => {
   const {
-    brandName = 'levitation',
-    brandSubtitle = 'move',
     invoiceTitle = 'INVOICE GENERATOR',
-    invoiceId,
     date,
     clientName,
+    clientEmail,
     items,
     subtotal,
     gst,
     total,
+    logoDataUrl = ''
   } = data;
 
   const rows = items
@@ -52,20 +53,119 @@ export const buildInvoiceHtml = (data: InvoiceHtmlInput): string => {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Invoice</title>
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300&display=swap');
+      
       :root { --brand:#7C5DFA; --bg:#0F1217; --card:#FFFFFF; --muted:#6B7280; --text:#0F172A; --success:#22c55e; }
       *{ box-sizing:border-box; }
       body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, 'Noto Sans', 'Helvetica Neue', sans-serif; margin:0; background:#111827; }
       .wrap { padding:24px; display:flex; justify-content:center; }
       .sheet { width:780px; background:#0b0e13; border-radius:8px; padding:16px; }
       .card { background:#fff; border-radius:6px; overflow:hidden; }
-      .topbar { background:#0f172a; color:#fff; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; }
-      .brand { display:flex; align-items:center; gap:10px; }
-      .brand .logo { width:28px; height:28px; background:#fff; color:#000; display:flex; align-items:center; justify-content:center; border-radius:6px; font-weight:700; }
-      .brand .text { line-height:1.1; }
-      .brand .text .name { font-weight:700; font-size:14px; }
-      .brand .text .sub { font-size:10px; opacity:.8; margin-top:2px; }
-      .title { font-weight:800; letter-spacing:.8px; font-size:12px; opacity:.9; }
-      .meta { background:#0f172a; color:#fff; padding:10px 18px; display:flex; justify-content:space-between; align-items:center; }
+      
+      .topbar { 
+        width: 593.5px;
+        height: 64px;
+        background:#ffffff; 
+        color:#000000; 
+        padding:0; 
+        display:flex; 
+        align-items:center; 
+        justify-content:space-between;
+        position: relative;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      
+      .brand { 
+        display:flex; 
+        align-items:center; 
+        gap:4.56px;
+        width: 114.86795043945312px;
+        height: 36.9180908203125px;
+        position: absolute;
+        top: 14.5px;
+        left: 23px;
+      }
+      
+      .brand .logo { 
+        width: 114.86795043945312px;
+        height: 36.9180908203125px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .brand .logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      
+      .brand .text { 
+        line-height:1.1; 
+        display: flex;
+        flex-direction: column;
+        gap: 4.53px;
+         top: 18.5px;
+      }
+      
+      .brand .text .name { 
+        font-family: 'Pretendard', sans-serif;
+        font-weight: 300;
+        font-style: Light;
+        font-size: 17.31px;
+        line-height: 160%;
+        letter-spacing: 0%;
+        color: #000000;
+        width: 75px;
+        height: 36.9180908203125px;
+        margin: 0;
+      }
+      
+      .brand .text .sub { 
+        font-family: 'Pretendard', sans-serif;
+        font-weight: 300;
+        font-style: Light;
+        font-size: 6.49px;
+        line-height: 160%;
+        letter-spacing: 0%;
+        color: #6b7280;
+        margin: 0;
+      }
+      
+      .title { 
+        font-weight:800; 
+        letter-spacing:.8px; 
+        font-size:12px; 
+        opacity:.9;
+        width: 187px;
+        height: 40.417724609375px;
+        position: absolute;
+        top: 14.5px;
+        left: 407px;
+        gap: 3px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      
+      .title h2 {
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0;
+        color: #000000;
+      }
+      
+      .title p {
+        font-size: 10px;
+        color: #6b7280;
+        margin: 0;
+        margin-top: 2px;
+      }
+      
+      .meta { background:#0f172a; color:#fff; top: 96px; padding:10px 18px; display:flex; justify-content:space-between; align-items:center; }
+      .nameRow { display:flex; align-items:center; gap:12px; }
+      .email-pill { background:#0c1220; border:1px solid #223049; color:#e5e7eb; padding:6px 12px; border-radius:999px; font-size:12px; }
       .chip { background:#16a34a; color:#fff; padding:6px 12px; border-radius:999px; font-size:12px; font-weight:600; display:inline-block; }
       table { width:100%; border-collapse:collapse; }
       thead th { text-align:left; padding:12px 16px; color:#111827; font-weight:700; font-size:13px; background:#f7f7fb; }
@@ -85,18 +185,22 @@ export const buildInvoiceHtml = (data: InvoiceHtmlInput): string => {
         <div class="card">
           <div class="topbar">
             <div class="brand">
-              <div class="logo">L</div>
-              <div class="text">
-                <div class="name">${brandName}</div>
-                <div class="sub">${brandSubtitle}</div>
+              <div class="logo">
+                ${logoDataUrl ? `<img src="${logoDataUrl}" alt="Logo" />` : ''}
               </div>
             </div>
-            <div class="title">${invoiceTitle}</div>
+            <div class="title">
+              <h2>${invoiceTitle}</h2>
+              <p>Sample Output should be this</p>
+            </div>
           </div>
           <div class="meta">
             <div>
-              <div style="color:#9ca3af; font-size:12px;">Client</div>
-              <div style="font-weight:700;">${clientName}</div>
+              <div style="color:#9ca3af; font-size:12px;">Name</div>
+              <div class="nameRow">
+                <div style="font-weight:700;">${clientName}</div>
+                ${clientEmail ? `<span class="email-pill">${clientEmail}</span>` : ''}
+              </div>
             </div>
             <div>
               <div style="color:#9ca3af; font-size:12px;">Date</div>

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createInvoice } from '../store/slices/invoiceSlice';
 import Header from '../components/Header';
 import { Plus, ArrowUpDown } from 'lucide-react';
+import addIcon from '../assets/formkit_add.svg';
 import { pdfService } from '../services';
 import { buildInvoiceHtml } from '../utils/invoiceTemplate';
+import type { RootState } from '../store/store';
+import logo from '../assets/logo.png';
 
 interface Props {
   onCreated?: () => void;
@@ -21,8 +24,34 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
   const [newItem, setNewItem] = useState<{ name: string; rate: number; quantity: number}>({ name: '', rate: 0, quantity: 1 });
   const [error, setError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [logoDataUrl, setLogoDataUrl] = useState<string>('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const authUserName = useSelector((s: RootState) => s.auth.user?.name);
+  const authUserEmail = useSelector((s: RootState) => s.auth.user?.email);
+
+  // Prefill client name from logged-in user if available
+  useEffect(() => {
+    if (!clientName && authUserName) {
+      setClientName(authUserName);
+    }
+  }, [authUserName]);
+
+  // Load logo.png as data URL so Puppeteer can render it inside PDF
+  useEffect(() => {
+    const loadImageAsDataUrl = async (src: string) => {
+      try {
+        const resp = await fetch(src);
+        const blob = await resp.blob();
+        const reader = new FileReader();
+        reader.onloadend = () => setLogoDataUrl(reader.result as string);
+        reader.readAsDataURL(blob);
+      } catch {
+        setLogoDataUrl('');
+      }
+    };
+    loadImageAsDataUrl(logo);
+  }, []);
 
   const updateItem = (index: number, field: keyof Item, value: string | number) => {
     const next = [...items];
@@ -54,14 +83,18 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
   const handleGeneratePdf = async () => {
     try {
       setIsGenerating(true);
+      const resolvedName = clientName || authUserName || 'Person_name';
+      const resolvedEmail = authUserEmail || clientEmail || '';
       const html = buildInvoiceHtml({
         invoiceId,
         date: new Date().toLocaleDateString(),
-        clientName: clientName || 'Person_Name',
+        clientName: resolvedName,
+        clientEmail: resolvedEmail,
         items: items.map(i => ({ name: i.name || 'Product', quantity: i.quantity, rate: i.rate, total: i.total })),
         subtotal,
         gst,
         total: amount,
+        logoDataUrl,
       });
       await pdfService.downloadPDF({ html, options: { format: 'A4' } }, `invoice-${invoiceId}.pdf`);
     } catch (err: any) {
@@ -76,7 +109,7 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
     setError('');
     try {
       // @ts-ignore
-      await dispatch(createInvoice({ invoiceId, clientName, clientEmail, dueDate, items, amount, status: 'pending' })).unwrap();
+      await dispatch(createInvoice({ invoiceId, clientName: clientName || authUserName || '', clientEmail, dueDate, items, amount, status: 'pending' })).unwrap();
       onCreated?.();
       navigate('/invoices');
     } catch (err: any) {
@@ -86,19 +119,15 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
 
   return (
     <div className="min-h-screen bg-[#0b0e13] px-6 py-12 relative">
-      {/* soft radial glow */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <div className="absolute left-1/2 top-44 -translate-x-1/2 h-80 w-[720px] rounded-full blur-[80px]" style={{background:'radial-gradient(ellipse at center, rgba(124,93,250,0.22), rgba(0,0,0,0))'}} />
-      </div>
 
       {/* Header */}
       <Header showLogoutButton={true} title="levitation" subtitle="move" />
       
-      <div className="relative max-w-6xl mx-auto">
+      <div className="relative max-w-6xl pt-32 mx-auto">
         {/* Main Title Section */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-extrabold tracking-wide text-white mb-2">Add Products</h1>
-          <p className="text-gray-400 text-sm">This is basic login page which is used for levitation assignment purpose.</p>
+        <div className="mb-10">
+          <h1 className="text-4xl font-extrabold tracking-wide text-white mb-2 text-left">Add Products</h1>
+          <p className="text-gray-400 text-sm text-left">This is basic login page which is used for levitation assignment purpose.</p>
         </div>
 
         {/* Product Input Form */}
@@ -107,7 +136,7 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
             <div>
               <label className="block text-sm font-semibold text-gray-200 mb-2">Product Name</label>
               <input 
-                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:ring-2 focus:ring-[#7C5DFA] focus:border-[#7C5DFA]" 
+                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
                 placeholder="Enter product name"
                 value={newItem.name}
                 onChange={e => setNewItem({ ...newItem, name: e.target.value })} 
@@ -118,8 +147,8 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
               <input 
                 type="number" 
                 min="0"
-                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:ring-2 focus:ring-[#7C5DFA] focus:border-[#7C5DFA]" 
-                placeholder="Enter price"
+                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
+                placeholder="Enter the price"
                 value={newItem.rate}
                 onChange={e => setNewItem({ ...newItem, rate: Number(e.target.value) })} 
               />
@@ -129,22 +158,23 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
               <input 
                 type="number" 
                 min="1"
-                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:ring-2 focus:ring-[#7C5DFA] focus:border-[#7C5DFA]" 
-                placeholder="Enter quantity"
+                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
+                placeholder="Enter the City"
                 value={newItem.quantity}
                 onChange={e => setNewItem({ ...newItem, quantity: Number(e.target.value) })} 
               />
             </div>
           </div>
           
-          <div className="mt-4">
+          <div className="mt-4 flex justify-center">
             <button 
               type="button" 
               onClick={addItem} 
-              className="bg-green-500 hover:bg-green-400 text-black font-semibold py-3 px-6 rounded-lg flex items-center gap-2 shadow"
+              className="bg-[#3a4a2f] hover:bg-[#4c6440] text-white font-semibold py-2.5 px-5 rounded-md flex items-center gap-2 shadow border border-[#5d6f50] focus:outline-none"
             >
-              <Plus size={20} />
-              Add Product
+              <span className="text-sm">Add Product</span>
+              <img src={addIcon} alt="add" className="w-4 h-4" />
+
             </button>
           </div>
         </div>
@@ -152,23 +182,23 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
         {/* Products Table */}
         <div className="rounded-lg shadow-md mb-8 border border-[#2e323a] overflow-hidden">
           <div className="overflow-x-auto bg-[#0f1217]">
-            <table className="w-full text-[15px]">
+            <table className="w-full text-[13px]">
               <thead>
-                <tr className="bg-white">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900">
+                <tr className="bg-[#e6e8eb]">
+                  <th className="text-left py-2.5 px-4 font-semibold text-slate-800">
                     <div className="flex items-center gap-2">
                       Product name
                       <ArrowUpDown size={16} className="text-gray-500" />
                     </div>
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900">Price</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900">
+                  <th className="text-left py-2.5 px-4 font-semibold text-slate-800">Price</th>
+                  <th className="text-left py-2.5 px-4 font-semibold text-slate-800">
                     <div className="flex items-center gap-2">
                       Quantity
                       <ArrowUpDown size={16} className="text-gray-500" />
                     </div>
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-900">Total Price</th>
+                  <th className="text-left py-2.5 px-4 font-semibold text-slate-800">Total Price</th>
                 </tr>
               </thead>
               <tbody>
@@ -180,6 +210,19 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
                     <td className="py-3 px-4 text-gray-100">INR {item.total}</td>
                   </tr>
                 ))}
+                {/* summary rows to match screenshot */}
+                <tr className="border-t border-[#2e323a]">
+                  <td className="py-3 px-4" colSpan={3}>
+                    <div className="w-full text-right text-gray-300">Sub-Total</div>
+                  </td>
+                  <td className="py-3 px-4 text-gray-300">INR {subtotal.toFixed(1)}</td>
+                </tr>
+                <tr className="border-t border-[#2e323a]">
+                  <td className="py-3 px-4" colSpan={3}>
+                    <div className="w-full text-right text-gray-300">Incl + GST 18%</div>
+                  </td>
+                  <td className="py-3 px-4 text-gray-300">INR {amount.toFixed(1)}</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -188,12 +231,12 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
         {/* Invoice Summary */}
         <div className="bg-transparent rounded-lg shadow-none p-6 mb-8">
           <div className="flex justify-end">
-            <div className="w-80 space-y-3 border border-[#2e323a] rounded-md p-4 bg-white/95 text-slate-800">
-              <div className="flex justify-between">
-                <span>Sub Total</span>
+            <div className="w-80 space-y-3 border border-[#2e323a] rounded-md p-4 bg-white text-slate-800">
+              <div className="flex justify-between text-[13px]">
+                <span>Sub-Total</span>
                 <span>INR {subtotal.toFixed(1)}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between text-[13px]">
                 <span>Inc + GST 18%</span>
                 <span>INR {amount.toFixed(1)}</span>
               </div>
@@ -202,21 +245,14 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
         </div>
 
         {/* Generate PDF Button */}
-        <div className="text-center space-x-3">
+        <div className="text-center">
           <button 
             type="button"
             onClick={handleGeneratePdf}
             disabled={isGenerating}
-            className="bg-[#2a2f3a] hover:bg-[#3a404e] disabled:opacity-70 text-white font-semibold py-3 px-10 rounded-full text-lg shadow-md"
+            className="mx-auto bg-[#2a2f3a] hover:bg-[#3a404e] disabled:opacity-70 text-[#c5ff8b] font-medium py-2.5 px-8 rounded-md text-sm shadow-md border border-[#404552]"
           >
             {isGenerating ? 'Generating...' : 'Generate PDF Invoice'}
-          </button>
-          <button 
-            type="button"
-            onClick={onSubmit as any}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-md text-lg"
-          >
-            Save Invoice
           </button>
         </div>
 

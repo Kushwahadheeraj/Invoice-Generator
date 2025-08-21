@@ -42,7 +42,14 @@ router.post(
     if (!ok) return res.status(400).json({ message: 'Invalid credentials' });
 
     const token = jwt.sign({ email }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
-    res.json({ token });
+    res.json({ 
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      }
+    });
   }
 );
 

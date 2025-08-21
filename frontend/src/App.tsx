@@ -29,6 +29,7 @@ const App: React.FC = () => {
   const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
   const dispatch = useDispatch();
   const { loading, list } = useSelector((s: RootState) => s.invoices);
+  const { token } = useSelector((s: RootState) => s.auth);
 
   useEffect(() => {
     if (list.length > 0) {
@@ -38,8 +39,10 @@ const App: React.FC = () => {
   }, [list]);
 
   useEffect(() => {
-    dispatch(fetchInvoices());
-  }, [dispatch]);
+    if (token) {
+      dispatch(fetchInvoices());
+    }
+  }, [dispatch, token]);
 
   const onFilterChange = (filters: string[]) => {
     if (filters.length === 0) {
