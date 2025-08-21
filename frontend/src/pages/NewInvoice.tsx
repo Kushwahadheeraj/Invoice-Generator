@@ -357,141 +357,141 @@ const NewInvoice: React.FC = () => {
         className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8"
       >
         <div className="space-y-8">
-          {/* Main Title Section */}
+        {/* Main Title Section */}
           <div className="text-center sm:text-left">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-wide text-white mb-3">Add Products</h1>
             <p className="text-gray-400 text-sm sm:text-base max-w-2xl mx-auto sm:mx-0">This is basic login page which is used for levitation assignment purpose.</p>
-          </div>
+        </div>
 
-          {/* Product Input Form */}
+        {/* Product Input Form */}
           <div className="bg-[#141a22] border border-[#2e323a] rounded-xl shadow-xl shadow-black/20 ring-1 ring-white/5 p-4 sm:p-6 lg:p-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
               <div className="sm:col-span-2 lg:col-span-1">
-                <label className="block text-sm font-semibold text-gray-200 mb-2">Product Name</label>
-                <input 
-                  className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
-                  placeholder="Enter product name"
-                  value={newItem.name}
-                  onChange={e => setNewItem({ ...newItem, name: e.target.value })} 
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-200 mb-2">Product Price</label>
-                <input 
-                  type="number" 
-                  min="0"
-                  className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
-                  placeholder="Enter product price"
-                  value={newItem.rate}
-                  onChange={e => setNewItem({ ...newItem, rate: Number(e.target.value) })} 
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-200 mb-2">Quantity</label>
-                <input 
-                  type="number" 
-                  min="1"
-                  className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
-                  placeholder="Enter product quantity"
-                  value={newItem.quantity}
-                  onChange={e => setNewItem({ ...newItem, quantity: Number(e.target.value) })} 
-                />
-              </div>
+              <label className="block text-sm font-semibold text-gray-200 mb-2">Product Name</label>
+              <input 
+                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
+                placeholder="Enter product name"
+                value={newItem.name}
+                onChange={e => setNewItem({ ...newItem, name: e.target.value })} 
+              />
             </div>
-            
-            <div className="mt-6 flex justify-center">
-              <button 
-                type="button" 
-                onClick={addItem} 
-                className="bg-[#3a4a2f] hover:bg-[#4c6440] text-white font-semibold py-3 px-6 sm:px-8 rounded-md flex items-center gap-2 shadow border border-[#5d6f50] focus:outline-none transition-colors"
-              >
-                <span className="text-sm sm:text-base">Add Product</span>
-                <img src={addIcon} alt="add" className="w-4 h-4" />
-              </button>
+            <div>
+              <label className="block text-sm font-semibold text-gray-200 mb-2">Product Price</label>
+              <input 
+                type="number" 
+                min="0"
+                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
+                  placeholder="Enter product price"
+                value={newItem.rate}
+                onChange={e => setNewItem({ ...newItem, rate: Number(e.target.value) })} 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-200 mb-2">Quantity</label>
+              <input 
+                type="number" 
+                min="1"
+                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:outline-none focus:ring-0 focus:border-[#2e323a]" 
+                  placeholder="Enter product quantity"
+                value={newItem.quantity}
+                onChange={e => setNewItem({ ...newItem, quantity: Number(e.target.value) })} 
+              />
             </div>
           </div>
+          
+            <div className="mt-6 flex justify-center">
+            <button 
+              type="button" 
+              onClick={addItem} 
+                className="bg-[#3a4a2f] hover:bg-[#4c6440] text-white font-semibold py-3 px-6 sm:px-8 rounded-md flex items-center gap-2 shadow border border-[#5d6f50] focus:outline-none transition-colors"
+            >
+                <span className="text-sm sm:text-base">Add Product</span>
+              <img src={addIcon} alt="add" className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
 
-          {/* Products Table */}
+        {/* Products Table */}
           <div className="rounded-lg shadow-md border border-[#2e323a] overflow-hidden">
-            <div className="overflow-x-auto bg-[#0f1217]">
+          <div className="overflow-x-auto bg-[#0f1217]">
               <table className="w-full text-xs sm:text-sm">
-                <thead>
-                  <tr className="bg-[#e6e8eb]">
+              <thead>
+                <tr className="bg-[#e6e8eb]">
                     <th className="text-left py-3 px-3 sm:px-4 font-semibold text-slate-800">
-                      <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                         <span className="hidden sm:inline">Product name</span>
                         <span className="sm:hidden">Product</span>
                         <ArrowUpDown size={14} className="text-gray-500 sm:w-4 sm:h-4" />
-                      </div>
-                    </th>
+                    </div>
+                  </th>
                     <th className="text-left py-3 px-3 sm:px-4 font-semibold text-slate-800">Price</th>
                     <th className="text-left py-3 px-3 sm:px-4 font-semibold text-slate-800">
-                      <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                         <span className="hidden sm:inline">Quantity</span>
                         <span className="sm:hidden">Qty</span>
                         <ArrowUpDown size={14} className="text-gray-500 sm:w-4 sm:h-4" />
-                      </div>
-                    </th>
+                    </div>
+                  </th>
                     <th className="text-left py-3 px-3 sm:px-4 font-semibold text-slate-800">
                       <span className="hidden sm:inline">Total Price</span>
                       <span className="sm:hidden">Total</span>
                     </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((item, idx) => (
-                    <tr key={idx} className="border-t border-[#2e323a] odd:bg-[#0f1217] even:bg-[#111827]">
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((item, idx) => (
+                  <tr key={idx} className="border-t border-[#2e323a] odd:bg-[#0f1217] even:bg-[#111827]">
                       <td className="py-3 px-3 sm:px-4 text-gray-100 text-xs sm:text-sm">{item.name}</td>
                       <td className="py-3 px-3 sm:px-4 text-gray-100 text-xs sm:text-sm">$ {item.rate}</td>
                       <td className="py-3 px-3 sm:px-4 text-gray-100 text-xs sm:text-sm">{item.quantity}</td>
                       <td className="py-3 px-3 sm:px-4 text-gray-100 text-xs sm:text-sm">INR {item.total}</td>
-                    </tr>
-                  ))}
-                  {/* summary rows to match screenshot */}
-                  <tr className="border-t border-[#2e323a]">
+                  </tr>
+                ))}
+                {/* summary rows to match screenshot */}
+                <tr className="border-t border-[#2e323a]">
                     <td className="py-3 px-3 sm:px-4" colSpan={3}>
                       <div className="w-full text-right text-gray-300 text-xs sm:text-sm">Sub-Total</div>
-                    </td>
+                  </td>
                     <td className="py-3 px-3 sm:px-4 text-gray-300 text-xs sm:text-sm">INR {subtotal.toFixed(1)}</td>
-                  </tr>
-                  <tr className="border-t border-[#2e323a]">
+                </tr>
+                <tr className="border-t border-[#2e323a]">
                     <td className="py-3 px-3 sm:px-4" colSpan={3}>
                       <div className="w-full text-right text-gray-300 text-xs sm:text-sm">Incl + GST 18%</div>
-                    </td>
+                  </td>
                     <td className="py-3 px-3 sm:px-4 text-gray-300 text-xs sm:text-sm">INR {amount.toFixed(1)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                </tr>
+              </tbody>
+            </table>
           </div>
+        </div>
 
-          {/* Invoice Summary */}
+        {/* Invoice Summary */}
           <div className="bg-transparent rounded-lg shadow-none p-4 sm:p-6">
             <div className="flex justify-center sm:justify-end">
               <div className="w-full sm:w-80 space-y-3 border border-[#2e323a] rounded-md p-4 bg-white text-slate-800">
                 <div className="flex justify-between text-xs sm:text-sm">
-                  <span>Sub-Total</span>
-                  <span>INR {subtotal.toFixed(1)}</span>
-                </div>
+                <span>Sub-Total</span>
+                <span>INR {subtotal.toFixed(1)}</span>
+              </div>
                 <div className="flex justify-between text-xs sm:text-sm">
-                  <span>Inc + GST 18%</span>
-                  <span>INR {amount.toFixed(1)}</span>
-                </div>
+                <span>Inc + GST 18%</span>
+                <span>INR {amount.toFixed(1)}</span>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Generate PDF Button */}
-          <div className="text-center">
-            <button 
-              type="button"
+        {/* Generate PDF Button */}
+        <div className="text-center">
+          <button 
+            type="button"
               onClick={generatePDF}
               disabled={items.length === 0 || isGenerating}
               className="w-full sm:w-auto mx-auto bg-[#2a2f3a] hover:bg-[#3a404e] disabled:opacity-70 text-[#c5ff8b] font-medium py-3 px-6 sm:px-8 rounded-md text-sm sm:text-base shadow-md border border-[#404552] transition-colors"
             >
               {isGenerating ? 'Generating PDF...' : 'Generate PDF Invoice'}
-            </button>
-          </div>
+          </button>
+        </div>
         </div>
       </div>
     </div>

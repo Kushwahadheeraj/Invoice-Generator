@@ -167,7 +167,7 @@ const Login: React.FC = () => {
 
         {/* Desktop Layout: Original Side-by-Side */}
         <div className="hidden lg:flex w-full h-full">
-          {/* Left Side - Image Slider */}
+      {/* Left Side - Image Slider */}
           <div 
             className="absolute w-[616px] h-[744px] top-[164px] left-[59px] rotate-0 opacity-100 flex flex-col gap-5"
           >
@@ -175,12 +175,12 @@ const Login: React.FC = () => {
               <div 
                 className="flex transition-transform duration-2000 ease-linear h-full"
                 style={{ transform: `translateX(-${slide * 120}%)` }}
-              >
-                {images.map((src, idx) => (
+          >
+            {images.map((src, idx) => (
                   <div key={idx} className="flex-shrink-0 w-full h-full mr-8">
-                    <img 
-                      src={src} 
-                      alt="slide" 
+              <img 
+                src={src} 
+                alt="slide" 
                       className="w-full h-full object-cover rounded-lg" 
                     />
                   </div>
@@ -198,13 +198,13 @@ const Login: React.FC = () => {
                         ? 'bg-white scale-125' 
                         : 'bg-white/50 hover:bg-white/75'
                     }`}
-                  />
-                ))}
-              </div>
-            </div>
+              />
+            ))}
           </div>
+        </div>
+      </div>
 
-          {/* Right Side - Login Form */}
+      {/* Right Side - Login Form */}
           <div 
             className="absolute w-[565px] h-[578.123779296875px] top-[180px] left-[784px] rotate-0 opacity-100 flex flex-col gap-11"
           >
@@ -223,56 +223,56 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            <div className="w-full max-w-md">
-              {/* Form Header */}
-              <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">Let the Journey Begin!</h1>
-                <p className="text-gray-300">This is basic login page which is used for levitation assignment purpose.</p>
-              </div>
-
-              {/* Form */}
-              <form onSubmit={onSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-white font-medium mb-2">Email Address</label>
-                  <input 
-                    type="email" 
-                    required 
-                    value={email} 
-                    onChange={e => setEmail(e.target.value)} 
-                    placeholder="Enter Email ID"
-                    className="w-full bg-dark-2 border border-gray-600 rounded-md p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand" 
-                  />
-                  <p className="text-gray-400 text-sm mt-1">This email will be displayed with your inquiry.</p>
-                </div>
-                
-                <div>
-                  <label className="block text-white font-medium mb-2">Current Password</label>
-                  <input 
-                    type="password" 
-                    required 
-                    minLength={6} 
-                    value={password} 
-                    onChange={e => setPassword(e.target.value)} 
-                    placeholder="Enter the Password"
-                    className="w-full bg-dark-2 border border-gray-600 rounded-md p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand" 
-                  />
-                </div>
-
-                {error && <p className="text-red-400 text-sm">{error}</p>}
-                
-                <div className="flex items-center gap-4">
-                  <button 
-                    disabled={loading} 
-                    type="submit" 
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md transition-colors"
-                  >
-                    {loading ? 'Logging in...' : 'Login now'}
-                  </button>
-                  <Link to="/register" className="text-white hover:text-gray-300">Don't have an account? Register here</Link>
-                </div>
-              </form>
-            </div>
+        <div className="w-full max-w-md">
+          {/* Form Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">Let the Journey Begin!</h1>
+            <p className="text-gray-300">This is basic login page which is used for levitation assignment purpose.</p>
           </div>
+
+          {/* Form */}
+          <form onSubmit={onSubmit} className="space-y-6">
+            <div>
+              <label className="block text-white font-medium mb-2">Email Address</label>
+              <input 
+                type="email" 
+                required 
+                value={email} 
+                onChange={e => setEmail(e.target.value)} 
+                placeholder="Enter Email ID"
+                className="w-full bg-dark-2 border border-gray-600 rounded-md p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand" 
+              />
+              <p className="text-gray-400 text-sm mt-1">This email will be displayed with your inquiry.</p>
+            </div>
+            
+            <div>
+              <label className="block text-white font-medium mb-2">Current Password</label>
+              <input 
+                type="password" 
+                required 
+                minLength={6} 
+                value={password} 
+                onChange={e => setPassword(e.target.value)} 
+                placeholder="Enter the Password"
+                className="w-full bg-dark-2 border border-gray-600 rounded-md p-3 text-white focus:outline-none focus:ring-2 focus:ring-brand" 
+              />
+            </div>
+
+            {error && <p className="text-red-400 text-sm">{error}</p>}
+            
+            <div className="flex items-center gap-4">
+              <button 
+                disabled={loading} 
+                type="submit" 
+                className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-md transition-colors"
+              >
+                {loading ? 'Logging in...' : 'Login now'}
+              </button>
+                  <Link to="/register" className="text-white hover:text-gray-300">Don't have an account? Register here</Link>
+            </div>
+          </form>
+        </div>
+      </div>
         </div>
       </div>
     </div>
