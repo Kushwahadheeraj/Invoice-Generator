@@ -26,7 +26,7 @@ app.use('/api/invoices', invoiceRoutes);
 app.use('/api/pdf', pdfRoutes);
 
 // DB Connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/invoice_app')
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://kushwahadheeraj245:Dkushwaha@cluster0.l2zvycp.mongodb.net/')
   .then(() => {
     console.log('Connected to MongoDB');
     app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));

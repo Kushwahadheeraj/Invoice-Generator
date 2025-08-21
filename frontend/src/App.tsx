@@ -24,28 +24,22 @@ const Protected: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return token ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
-const API_URL = 'http://localhost:5001/api/invoices';
-
 const App: React.FC = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
   const dispatch = useDispatch();
-  const { loading } = useSelector((s: RootState) => s.invoices);
+  const { loading, list } = useSelector((s: RootState) => s.invoices);
 
   useEffect(() => {
-    fetchInvoicesFromAPI();
-  }, []);
-
-  const fetchInvoicesFromAPI = async () => {
-    try {
-      const response = await fetch(API_URL);
-      const data = await response.json();
-      setInvoices(data);
-      setFilteredInvoices(data);
-    } catch (error) {
-      console.error('Failed to fetch invoices:', error);
+    if (list.length > 0) {
+      setInvoices(list);
+      setFilteredInvoices(list);
     }
-  };
+  }, [list]);
+
+  useEffect(() => {
+    dispatch(fetchInvoices());
+  }, [dispatch]);
 
   const onFilterChange = (filters: string[]) => {
     if (filters.length === 0) {

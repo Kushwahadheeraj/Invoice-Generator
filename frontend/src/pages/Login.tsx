@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../store/slices/authSlice';
 import type { RootState } from '../store/store';
 import Header from '../components/Header';
+import loginImg from '../assets/login.jpg';
+import loginImg1 from '../assets/login1.png';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -19,14 +21,13 @@ const Login: React.FC = () => {
   };
 
   useEffect(() => {
-    if (token) navigate('/welcome');
+    if (token) navigate('/new');
   }, [token, navigate]);
 
   // Slider images
   const images = [
-    'https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1200&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1529336953121-4f3b7e68a9f0?q=80&w=1200&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1483478550801-ceba5fe50e8e?q=80&w=1200&auto=format&fit=crop',
+    loginImg,
+    loginImg1,
   ];
 
   const [slide, setSlide] = useState(0);
@@ -43,14 +44,19 @@ const Login: React.FC = () => {
       {/* Left Side - Image Slider */}
       <div className="w-1/2 flex items-center justify-center p-12">
         <div className="relative h-[460px] w-full overflow-hidden rounded-xl shadow">
-          {images.map((src, idx) => (
-            <img 
-              key={idx} 
-              src={src} 
-              alt="slide" 
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${idx===slide?'opacity-100':'opacity-0'}`} 
-            />
-          ))}
+          <div 
+            className="flex transition-transform duration-700 ease-in-out h-full"
+            style={{ transform: `translateX(-${slide * 100}%)` }}
+          >
+            {images.map((src, idx) => (
+              <img 
+                key={idx} 
+                src={src} 
+                alt="slide" 
+                className="w-full h-full object-cover flex-shrink-0" 
+              />
+            ))}
+          </div>
         </div>
       </div>
 

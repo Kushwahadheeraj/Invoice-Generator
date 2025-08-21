@@ -1,31 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
+import { invoiceService, CreateInvoiceData } from '../../services'
 import { RootState } from '../store'
 import { Invoice } from '../../types'
 
-const API = 'http://localhost:5001/api/invoices'
-
 export const fetchInvoices = createAsyncThunk<Invoice[], string[] | undefined, { state: RootState }>(
   'invoices/fetch',
-  async (filters, { getState }) => {
-    const token = getState().auth.token
-    const params = new URLSearchParams()
-    if (filters && filters.length) params.append('status', filters.join(','))
-    const res = await axios.get(`${API}?${params.toString()}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    return res.data
+  async (filters) => {
+    return await invoiceService.getInvoices(filters)
   }
 )
 
-export const createInvoice = createAsyncThunk<Invoice, any, { state: RootState }>(
+export const createInvoice = createAsyncThunk<Invoice, CreateInvoiceData, { state: RootState }>(
   'invoices/create',
-  async (payload, { getState }) => {
-    const token = getState().auth.token
-    const res = await axios.post(API, payload, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    return res.data
+  async (payload) => {
+    return await invoiceService.createInvoice(payload)
   }
 )
 

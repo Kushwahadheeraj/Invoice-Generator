@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 import type { RootState } from '../store/store';
 import logo from '../assets/logo.svg';
+import ConnectionStatusComponent from './ConnectionStatus';
 
 interface HeaderProps {
   invoiceCount?: number;
@@ -102,6 +103,7 @@ const Header: React.FC<HeaderProps> = ({
         </div>
         
         <div className="flex items-center gap-10">
+          <ConnectionStatusComponent />
           <div className="relative">
             <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center gap-3 font-bold text-dark-1">
               Filter by status <ChevronDown className={`transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} color="#7C5DFA" />

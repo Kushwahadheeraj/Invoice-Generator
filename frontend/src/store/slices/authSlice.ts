@@ -1,30 +1,44 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
+import { authService, LoginCredentials, RegisterCredentials, AuthResponse } from '../../services'
 
 interface AuthState {
   token: string | null
+  user: {
+    id: string
+    name: string
+    email: string
+  } | null
   loading: boolean
   error: string | null
 }
 
 const initialState: AuthState = {
   token: localStorage.getItem('token'),
+  user: (() => {
+    try {
+      const userData = localStorage.getItem('user');
+      return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+      console.warn('Failed to parse user data from localStorage:', error);
+      localStorage.removeItem('user'); // Clean up invalid data
+      return null;
+    }
+  })(),
   loading: false,
   error: null,
 }
 
 export const login = createAsyncThunk(
   'auth/login',
-  async (payload: { email: string; password: string }) => {
-    const res = await axios.post('http://localhost:5001/api/auth/login', payload)
-    return res.data.token as string
+  async (payload: LoginCredentials): Promise<AuthResponse> => {
+    return await authService.login(payload)
   }
 )
 
 export const register = createAsyncThunk(
   'auth/register',
-  async (payload: { name: string; email: string; password: string }) => {
-    await axios.post('http://localhost:5001/api/auth/register', payload)
+  async (payload: RegisterCredentials): Promise<void> => {
+    await authService.register(payload)
   }
 )
 
@@ -34,7 +48,8 @@ const authSlice = createSlice({
   reducers: {
     logout(state) {
       state.token = null
-      localStorage.removeItem('token')
+      state.user = null
+      authService.logout()
     },
   },
   extraReducers: (builder) => {
@@ -45,8 +60,10 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false
-        state.token = action.payload
-        localStorage.setItem('token', action.payload)
+        state.token = action.payload.token
+        state.user = action.payload.user
+        localStorage.setItem('token', action.payload.token)
+        localStorage.setItem('user', JSON.stringify(action.payload.user))
       })
       .addCase(login.rejected, (state, action: any) => {
         state.loading = false
