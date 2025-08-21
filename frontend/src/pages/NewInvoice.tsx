@@ -85,46 +85,51 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 px-6 py-10 relative">
+    <div className="min-h-screen bg-[#0b0e13] px-6 py-12 relative">
+      {/* soft radial glow */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="absolute left-1/2 top-44 -translate-x-1/2 h-80 w-[720px] rounded-full blur-[80px]" style={{background:'radial-gradient(ellipse at center, rgba(124,93,250,0.22), rgba(0,0,0,0))'}} />
+      </div>
+
       {/* Header */}
       <Header showLogoutButton={true} title="levitation" subtitle="move" />
       
-      <div className="max-w-6xl mx-auto">
+      <div className="relative max-w-6xl mx-auto">
         {/* Main Title Section */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Add Products</h1>
-          <p className="text-gray-600">This is basic login page which is used for levitation assignment purpose.</p>
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-extrabold tracking-wide text-white mb-2">Add Products</h1>
+          <p className="text-gray-400 text-sm">This is basic login page which is used for levitation assignment purpose.</p>
         </div>
 
         {/* Product Input Form */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-[#141a22] border border-[#2e323a] rounded-xl shadow-xl shadow-black/20 ring-1 ring-white/5 p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Product Name</label>
+              <label className="block text-sm font-semibold text-gray-200 mb-2">Product Name</label>
               <input 
-                className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:ring-2 focus:ring-[#7C5DFA] focus:border-[#7C5DFA]" 
                 placeholder="Enter product name"
                 value={newItem.name}
                 onChange={e => setNewItem({ ...newItem, name: e.target.value })} 
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Product Price</label>
+              <label className="block text-sm font-semibold text-gray-200 mb-2">Product Price</label>
               <input 
                 type="number" 
                 min="0"
-                className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:ring-2 focus:ring-[#7C5DFA] focus:border-[#7C5DFA]" 
                 placeholder="Enter price"
                 value={newItem.rate}
                 onChange={e => setNewItem({ ...newItem, rate: Number(e.target.value) })} 
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Quantity</label>
+              <label className="block text-sm font-semibold text-gray-200 mb-2">Quantity</label>
               <input 
                 type="number" 
                 min="1"
-                className="w-full border border-gray-300 rounded-md p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                className="w-full h-12 bg-[#0b0f14] border border-[#2e323a] text-gray-200 placeholder:text-gray-500 rounded-md px-3 focus:ring-2 focus:ring-[#7C5DFA] focus:border-[#7C5DFA]" 
                 placeholder="Enter quantity"
                 value={newItem.quantity}
                 onChange={e => setNewItem({ ...newItem, quantity: Number(e.target.value) })} 
@@ -136,7 +141,7 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
             <button 
               type="button" 
               onClick={addItem} 
-              className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-md flex items-center gap-2"
+              className="bg-green-500 hover:bg-green-400 text-black font-semibold py-3 px-6 rounded-lg flex items-center gap-2 shadow"
             >
               <Plus size={20} />
               Add Product
@@ -145,34 +150,34 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
         </div>
 
         {/* Products Table */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="overflow-x-auto">
-            <table className="w-full">
+        <div className="rounded-lg shadow-md mb-8 border border-[#2e323a] overflow-hidden">
+          <div className="overflow-x-auto bg-[#0f1217]">
+            <table className="w-full text-[15px]">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                <tr className="bg-white">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900">
                     <div className="flex items-center gap-2">
                       Product name
                       <ArrowUpDown size={16} className="text-gray-500" />
                     </div>
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Price</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900">Price</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900">
                     <div className="flex items-center gap-2">
                       Quantity
                       <ArrowUpDown size={16} className="text-gray-500" />
                     </div>
                   </th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Total Price</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-900">Total Price</th>
                 </tr>
               </thead>
               <tbody>
                 {items.map((item, idx) => (
-                  <tr key={idx} className="border-b border-gray-100">
-                    <td className="py-3 px-4 text-gray-800">{item.name}</td>
-                    <td className="py-3 px-4 text-gray-800">$ {item.rate}</td>
-                    <td className="py-3 px-4 text-gray-800">{item.quantity}</td>
-                    <td className="py-3 px-4 text-gray-800">INR {item.total}</td>
+                  <tr key={idx} className="border-t border-[#2e323a] odd:bg-[#0f1217] even:bg-[#111827]">
+                    <td className="py-3 px-4 text-gray-100">{item.name}</td>
+                    <td className="py-3 px-4 text-gray-100">$ {item.rate}</td>
+                    <td className="py-3 px-4 text-gray-100">{item.quantity}</td>
+                    <td className="py-3 px-4 text-gray-100">INR {item.total}</td>
                   </tr>
                 ))}
               </tbody>
@@ -181,14 +186,14 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
         </div>
 
         {/* Invoice Summary */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-transparent rounded-lg shadow-none p-6 mb-8">
           <div className="flex justify-end">
-            <div className="w-80 space-y-3">
-              <div className="flex justify-between text-gray-600">
+            <div className="w-80 space-y-3 border border-[#2e323a] rounded-md p-4 bg-white/95 text-slate-800">
+              <div className="flex justify-between">
                 <span>Sub Total</span>
                 <span>INR {subtotal.toFixed(1)}</span>
               </div>
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between">
                 <span>Inc + GST 18%</span>
                 <span>INR {amount.toFixed(1)}</span>
               </div>
@@ -202,14 +207,14 @@ const NewInvoice: React.FC<Props> = ({ onCreated }) => {
             type="button"
             onClick={handleGeneratePdf}
             disabled={isGenerating}
-            className="bg-gray-800 hover:bg-gray-900 disabled:opacity-70 text-white font-semibold py-4 px-8 rounded-lg text-lg"
+            className="bg-[#2a2f3a] hover:bg-[#3a404e] disabled:opacity-70 text-white font-semibold py-3 px-10 rounded-full text-lg shadow-md"
           >
             {isGenerating ? 'Generating...' : 'Generate PDF Invoice'}
           </button>
           <button 
             type="button"
             onClick={onSubmit as any}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-8 rounded-lg text-lg"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-md text-lg"
           >
             Save Invoice
           </button>
